@@ -1,17 +1,18 @@
+-- Company registration
 CREATE OR REPLACE FUNCTION register_company(
     p_user_id INT,
     p_industry VARCHAR,
     p_company_name VARCHAR,
     p_website VARCHAR,
     p_address VARCHAR,
-    p_logo_url VARCHAR
+    p_logo_url VARCHAR,
 )
 RETURNS void AS
 $$
 DECLARE
     existing RECORD;
 BEGIN
-    -- Check if user exists and user_type = 'company' (optional, recommended)
+    -- Check if user exists and user_type = 'company'
     PERFORM 1 FROM Tbl_user WHERE user_id = p_user_id AND user_type = 'company';
     IF NOT FOUND THEN
         RAISE EXCEPTION 'User ID % does not exist or is not a company user.', p_user_id;
@@ -34,5 +35,60 @@ BEGIN
     );
 
     RAISE NOTICE 'Company "%" registered successfully for user ID %.', p_company_name, p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- register_recruiter function
+CREATE OR REPLACE FUNCTION register_recruiter(
+    p_user_id INT,
+    p_company_id INT,
+    p_position VARCHAR,
+    p_recruiter_bio TEXT
+)
+RETURNS void AS
+$$
+DECLARE
+    user_exists BOOLEAN;
+    company_exists BOOLEAN;
+    already_registered BOOLEAN;
+BEGIN
+    -- Check if user exists
+    SELECT EXISTS (
+        SELECT 1 FROM Tbl_user WHERE user_id = p_user_id
+    ) INTO user_exists;
+
+    IF NOT user_exists THEN
+        RAISE EXCEPTION 'User ID % does not exist.', p_user_id;
+    END IF;
+
+    -- Check if company exists
+    SELECT EXISTS (
+        SELECT 1 FROM Tbl_Company WHERE company_id = p_company_id
+    ) INTO company_exists;
+
+    IF NOT company_exists THEN
+        RAISE EXCEPTION 'Company ID % does not exist.', p_company_id;
+    END IF;
+
+    -- Check if recruiter is already registered
+    SELECT EXISTS (
+        SELECT 1 FROM Tbl_Recruiter
+        WHERE user_id = p_user_id AND company_id = p_company_id
+    ) INTO already_registered;
+
+    IF already_registered THEN
+        RAISE EXCEPTION 'User ID % is already a recruiter for Company ID %.', p_user_id, p_company_id;
+    END IF;
+
+    -- Insert recruiter
+    INSERT INTO Tbl_Recruiter (
+        company_id, user_id, position, recruiter_bio
+    )
+    VALUES (
+        p_company_id, p_user_id, p_position, p_recruiter_bio
+    );
+
+    RAISE NOTICE 'Recruiter (User ID %) registered for Company ID %.', p_user_id, p_company_id;
 END;
 $$ LANGUAGE plpgsql;
