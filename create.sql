@@ -158,3 +158,23 @@ CREATE TABLE Tbl_Message (
                              FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
                              FOREIGN KEY (company_id) REFERENCES Tbl_Company(company_id) ON DELETE CASCADE
 );
+
+CREATE OR REPLACE FUNCTION create_profile(
+    user_id INT,
+    website VARCHAR,
+    linkedin_url VARCHAR
+)
+RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO tbl_profile (
+        user_id,
+        website,
+        linkedin_url
+    ) VALUES (
+        user_id, website, linkedin_url
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT create_profile(1, 'https://mypage.com', 'https://linkedin.com/in/athiwat');
