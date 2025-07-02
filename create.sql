@@ -1,14 +1,16 @@
 CREATE TABLE Tbl_user (
-                          user_id SERIAL PRIMARY KEY,
-                          full_name VARCHAR(100) NOT NULL,
-                          address VARCHAR(100),
-                          email VARCHAR(100) UNIQUE NOT NULL,
-                          password_hash VARCHAR(255) NOT NULL,
-                          profile_pic VARCHAR(255),
-                          bio TEXT,
-                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                          user_type VARCHAR(100) NOT NULL
+    user_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    address VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    profile_pic VARCHAR(255),
+    bio TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_type VARCHAR(100) NOT NULL DEFAULT 'job_seeker',
+    CHECK (user_type IN ('job_seeker', 'company'))
 );
+
 
 CREATE TABLE Tbl_Profile (
                              profile_id SERIAL PRIMARY KEY,
@@ -142,7 +144,7 @@ CREATE TABLE Tbl_Recruiter (
                                user_id INT NOT NULL,
                                position VARCHAR(100),
                                recruiter_bio TEXT,
-                               PRIMARY KEY (company_id, user_id),
+                               PRIMAR   Y KEY (company_id, user_id),
                                FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
                                FOREIGN KEY (company_id) REFERENCES Tbl_Company(company_id) ON DELETE CASCADE
 );
