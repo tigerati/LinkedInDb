@@ -92,3 +92,41 @@ BEGIN
     RAISE NOTICE 'Recruiter (User ID %) registered for Company ID %.', p_user_id, p_company_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- create_job_post function
+CREATE OR REPLACE FUNCTION create_job_post(
+    p_company_id INT,
+    p_title VARCHAR,
+    p_description TEXT,
+    p_address VARCHAR,
+    p_employment_type VARCHAR,
+    p_salary_range VARCHAR
+)
+RETURNS void AS
+$$
+DECLARE
+    company_exists BOOLEAN;
+BEGIN
+    -- Check if the company exists
+    SELECT EXISTS (
+        SELECT 1 FROM Tbl_Company WHERE company_id = p_company_id
+    ) INTO company_exists;
+
+    IF NOT company_exists THEN
+        RAISE EXCEPTION 'Company ID % does not exist.', p_company_id;
+    END IF;
+
+    -- Insert job post
+    INSERT INTO Tbl_JobPost (
+        company_id, title, description, address,
+        employment_type, salary_range
+    )
+    VALUES (
+        p_company_id, p_title, p_description, p_address,
+        p_employment_type, p_salary_range
+    );
+
+    RAISE NOTICE 'Job post "%" has been successfully created by Company ID %.', p_title, p_company_id;
+END;
+$$ LANGUAGE plpgsql;
+

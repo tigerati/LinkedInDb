@@ -1,13 +1,13 @@
 -- add user
+
 CREATE OR REPLACE FUNCTION register_user(
-    full_name VARCHAR,
-    address VARCHAR,
-    email VARCHAR,
-    password_hash VARCHAR,
-    profile_pic VARCHAR,
-    bio TEXT,
-    created_at VARCHAR,
-    user_type VARCHAR
+    v_full_name VARCHAR,
+    v_address VARCHAR,
+    v_email VARCHAR,
+    v_password_hash VARCHAR,
+    v_profile_pic VARCHAR,
+    v_bio TEXT,
+    v_user_type VARCHAR
 )
 RETURNS void AS
 $$
@@ -15,18 +15,18 @@ DECLARE
     existing_user RECORD;
 BEGIN
     -- Validate user_type
-    IF user_type NOT IN ('job_seeker', 'company') THEN
+    IF v_user_type NOT IN ('JobSeeker', 'company') THEN
         RAISE NOTICE 'User type must be either ''job_seeker'' or ''company''.';
-        RAISE EXCEPTION 'Invalid user_type: %, registration aborted.', user_type;
+        RAISE EXCEPTION 'Invalid user_type: %, registration aborted.', v_user_type;
     END IF;
 
     -- Check for duplicate full_name + email
     SELECT * INTO existing_user
     FROM tbl_user
-    WHERE full_name = full_name AND email = email;
+    WHERE full_name = v_full_name AND email = v_email;
 
     IF FOUND THEN
-        RAISE EXCEPTION 'User with full name "%" and email "%" already exists.', full_name, email;
+        RAISE EXCEPTION 'User with full name "%" and email "%" already exists.', v_full_name, v_email;
     END IF;
 
     -- Insert the user
@@ -35,13 +35,14 @@ BEGIN
         profile_pic, bio, created_at, user_type
     )
     VALUES (
-        full_name, address, email, password_hash,
-        profile_pic, bio, created_at::TIMESTAMP, user_type
+        v_full_name, v_address, v_email, v_password_hash,
+        v_profile_pic, v_bio, NOW(), v_user_type
     );
 
-    RAISE NOTICE 'User % has been successfully registered as %.', full_name, user_type;
+    RAISE NOTICE 'User % has been successfully registered as %.', v_full_name, v_user_type;
 END;
 $$ LANGUAGE plpgsql;
+
 -- add education
 CREATE OR REPLACE FUNCTION add_education(
     user_id INT,

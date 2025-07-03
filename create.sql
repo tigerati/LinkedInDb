@@ -1,6 +1,6 @@
 CREATE TABLE Tbl_user (
     user_id SERIAL PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
+    full_name VARCHAR(100) UNIQUE NOT NULL ,
     address VARCHAR(100),
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
