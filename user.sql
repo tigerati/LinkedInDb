@@ -169,3 +169,99 @@ EXCEPTION
         RETURN 'User already has this skill';
 END;
 $$ LANGUAGE plpgsql;
+
+
+--Create application for Job Seeker
+CREATE OR REPLACE FUNCTION send_application (
+    user_id INT,
+    job_id INT,
+    is_available BOOL,
+    applied_date DATE
+)
+RETURNS void AS
+$$
+BEGIN
+    INSERT INTO tbl_application(
+        user_id,
+        job_id,
+        is_available,
+        applied_date
+    )
+    VALUES ($1, $2, $3, $4);
+END;
+$$ LANGUAGE plpgsql;
+
+--Pending a connection between Users
+CREATE OR REPLACE FUNCTION create_connection (
+    user1_id INT,
+    user2_id INT
+)
+RETURNS void AS
+$$
+BEGIN
+    INSERT INTO tbl_connection(
+        user1_id,
+        user2_id,
+        status,
+        connected_at
+    )
+    VALUES (
+        user1_id,
+        user2_id,
+        'pending',  -- default status
+        CURRENT_DATE        -- connection not accepted yet
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+--Accepting connection request
+CREATE OR REPLACE FUNCTION accept_connection(
+    _user1_id INT,
+    _user2_id INT
+)
+RETURNS TEXT AS
+$$
+BEGIN
+    -- Check if there is a pending connection
+    IF EXISTS (
+        SELECT 1 FROM tbl_connection
+        WHERE user1_id = _user1_id AND user2_id = _user2_id AND status = 'pending'
+    ) THEN
+        -- Update status to accepted and set connected_at
+        UPDATE tbl_connection
+        SET status = 'accepted',
+            connected_at = CURRENT_DATE
+        WHERE user1_id = _user1_id AND user2_id = _user2_id;
+
+        RETURN 'Connection accepted.';
+    ELSE
+        RETURN 'No pending request found.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+--Rejecting connection request
+CREATE OR REPLACE FUNCTION reject_connection(
+    _user1_id INT,
+    _user2_id INT
+)
+RETURNS TEXT AS
+$$
+BEGIN
+    -- Check if there is a pending connection
+    IF EXISTS (
+        SELECT 1 FROM tbl_connection
+        WHERE user1_id = _user1_id AND user2_id = _user2_id AND status = 'pending'
+    ) THEN
+        -- Update status to accepted and set connected_at
+        UPDATE tbl_connection
+        SET status = 'rejected',
+            connected_at = CURRENT_DATE
+        WHERE user1_id = _user1_id AND user2_id = _user2_id;
+
+        RETURN 'Connection rejected.';
+    ELSE
+        RETURN 'No pending request found.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
