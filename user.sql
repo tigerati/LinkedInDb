@@ -103,21 +103,6 @@ $$
     );
 $$ LANGUAGE SQL;
 
-select add_experience(
-       2,
-       'Nvidia',
-       'Maid',
-       '2005-11-01',
-       '2005-11-02',
-       'oiarhgoiahraorjgow'
-       );
-
-select * from tbl_experience;
-
-insert into tbl_skill(skill_name) values ('Python'), ('SQL'), ('Java');
-
-select * from tbl_skill;
-
 CREATE OR REPLACE FUNCTION add_user_skill(
     _user_id INT,
     _skill_id INT
@@ -133,10 +118,6 @@ EXCEPTION
         RETURN 'This skill already exists for the user';
 END;
 $$ LANGUAGE plpgsql;
-
-select add_user_skill(2, 1);
-
-select * from tbl_userskill;
 
 CREATE OR REPLACE FUNCTION add_user_skill_by_name(
     _user_id INT,
