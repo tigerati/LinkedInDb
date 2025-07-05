@@ -169,3 +169,17 @@ EXCEPTION
         RETURN 'User already has this skill';
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to delete a user by user_id
+CREATE OR REPLACE FUNCTION delete_user(p_user_id INT)
+    RETURNS VOID AS $$
+BEGIN
+    -- First, check if the user exists
+    IF EXISTS (SELECT 1 FROM Tbl_user WHERE user_id = p_user_id) THEN
+        DELETE FROM Tbl_user WHERE user_id = p_user_id;
+        RAISE NOTICE 'User with ID % has been deleted.', p_user_id;
+    ELSE
+        RAISE NOTICE 'User with ID % does not exist.', p_user_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
