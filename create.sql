@@ -129,11 +129,11 @@ CREATE TABLE Tbl_JobPost (
                              FOREIGN KEY (company_id) REFERENCES Tbl_Company(company_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Tbl_Application (
+CREATE TABLE tbl_application (
                                  application_id SERIAL PRIMARY KEY,
                                  user_id INT NOT NULL,
                                  job_id INT NOT NULL,
-                                 status VARCHAR(100),
+                                 is_available BOOL NOT NULL,
                                  applied_date DATE DEFAULT CURRENT_DATE,
                                  FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
                                  FOREIGN KEY (job_id) REFERENCES Tbl_JobPost(job_id) ON DELETE CASCADE
