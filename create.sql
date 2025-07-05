@@ -7,8 +7,8 @@ CREATE TABLE Tbl_user (
     profile_pic VARCHAR(255),
     bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_type VARCHAR(100) NOT NULL DEFAULT 'job_seeker',
-    CHECK (user_type IN ('job_seeker', 'company'))
+    user_type VARCHAR(100) NOT NULL DEFAULT 'jobSeeker',
+    CHECK (user_type IN ('jobSeeker', 'company'))
 );
 
 
@@ -41,13 +41,14 @@ CREATE TABLE Tbl_Post (
 );
 
 CREATE TABLE Tbl_Reaction (
-                              reaction_id SERIAL PRIMARY KEY,
-                              post_id INT NOT NULL,
-                              user_id INT NOT NULL,
-                              reaction_type VARCHAR(100) NOT NULL,
-                              reacted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              FOREIGN KEY (post_id) REFERENCES Tbl_Post(post_id) ON DELETE CASCADE,
-                              FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE
+    reaction_id SERIAL PRIMARY KEY,
+    post_id INT NOT NULL,
+    user_id INT NOT NULL,
+    reaction_type VARCHAR(100) NOT NULL,
+    reacted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Tbl_Post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
+    UNIQUE (post_id, user_id)
 );
 
 CREATE TABLE Tbl_Comment (
@@ -159,6 +160,16 @@ CREATE TABLE Tbl_Message (
                              FOREIGN KEY (company_id) REFERENCES Tbl_Company(company_id) ON DELETE CASCADE
 );
 
+CREATE TABLE tbl_conversation (
+    conversation_id SERIAL PRIMARY KEY,
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    started_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user1_id) REFERENCES tbl_user(user_id),
+    FOREIGN KEY (user2_id) REFERENCES tbl_user(user_id),
+    CONSTRAINT unique_pair UNIQUE (user1_id, user2_id)
+);
+
 CREATE OR REPLACE FUNCTION create_profile(
     user_id INT,
     website VARCHAR,
@@ -177,4 +188,3 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT create_profile(1, 'https://mypage.com', 'https://linkedin.com/in/athiwat');
