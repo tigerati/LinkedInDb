@@ -130,3 +130,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- delete_company function
+CREATE OR REPLACE FUNCTION delete_company(p_company_id INT)
+    RETURNS VOID AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM Tbl_Company WHERE company_id = p_company_id) THEN
+        DELETE FROM Tbl_Company WHERE company_id = p_company_id;
+        RAISE NOTICE 'Company with ID % has been deleted.', p_company_id;
+    ELSE
+        RAISE NOTICE 'Company with ID % does not exist.', p_company_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- delete_job_post function
+CREATE OR REPLACE FUNCTION delete_job_post(p_job_id INT)
+    RETURNS VOID AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM Tbl_JobPost WHERE job_id = p_job_id) THEN
+        DELETE FROM Tbl_JobPost WHERE job_id = p_job_id;
+        RAISE NOTICE 'Job post with ID % has been deleted.', p_job_id;
+    ELSE
+        RAISE NOTICE 'Job post with ID % does not exist.', p_job_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
