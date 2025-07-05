@@ -16,9 +16,6 @@ BEGIN
 END;
 $$ language plpgsql;
 
-select create_post(1, 'intro to sql', 'https://gwpojg.com', TRUE);
-
-select * from tbl_post;
 
 create or replace function comment_post(
     post_id int,

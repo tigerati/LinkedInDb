@@ -22,3 +22,27 @@ BEGIN
 END;
 $$ language plpgsql;
 
+create or replace function delete_react(
+    _post_id int,
+    _user_id int
+)
+returns void AS
+$$
+BEGIN
+    delete from tbl_reaction
+    where post_id = _post_id and user_id = _user_id;
+END;
+$$ language plpgsql;
+
+create or replace function delete_comment(
+    _comment_id int,
+    _post_id int,
+    _user_id int
+)
+returns void AS
+$$
+BEGIN
+    delete from tbl_comment
+    where user_id = _user_id and post_id = _post_id and comment_id = _comment_id;
+END;
+$$ language plpgsql;

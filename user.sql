@@ -42,6 +42,25 @@ BEGIN
     RAISE NOTICE 'User % has been successfully registered as %.', full_name, user_type;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION create_profile(
+    user_id INT,
+    website VARCHAR,
+    linkedin_url VARCHAR
+)
+RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO tbl_profile (
+        user_id,
+        website,
+        linkedin_url
+    ) VALUES (
+        user_id, website, linkedin_url
+    );
+END;
+$$ LANGUAGE plpgsql;
+
 -- add education
 CREATE OR REPLACE FUNCTION add_education(
     user_id INT,
@@ -76,8 +95,7 @@ select add_education(
        2004
        );
 
-select * from tbl_education;
-
+-- add experience
 CREATE OR REPLACE FUNCTION add_experience(
     user_id INT,
     company_name VARCHAR,
@@ -147,5 +165,20 @@ BEGIN
 EXCEPTION
     WHEN unique_violation THEN
         RETURN 'User already has this skill';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION create_react(
+    _post_id INT,
+    _user_id INT,
+    _reaction_type VARCHAR
+)
+RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO tbl_reaction (post_id, user_id, reaction_type)
+    VALUES (_post_id, _user_id, _reaction_type)
+    ON CONFLICT (post_id, user_id)
+    DO UPDATE SET reaction_type = EXCLUDED.reaction_type;
 END;
 $$ LANGUAGE plpgsql;
