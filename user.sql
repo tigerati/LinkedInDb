@@ -260,3 +260,23 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Function to delete a connection between two users
+CREATE OR REPLACE FUNCTION delete_connection(p_user1_id INT, p_user2_id INT)
+RETURNS VOID AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM Tbl_Connection
+        WHERE (user1_id = p_user1_id AND user2_id = p_user2_id)
+           OR (user1_id = p_user2_id AND user2_id = p_user1_id)
+    ) THEN
+        DELETE FROM Tbl_Connection
+        WHERE (user1_id = p_user1_id AND user2_id = p_user2_id)
+           OR (user1_id = p_user2_id AND user2_id = p_user1_id);
+
+        RAISE NOTICE 'Connection between % and % has been deleted.', p_user1_id, p_user2_id;
+    ELSE
+        RAISE NOTICE 'No connection exists between % and %.', p_user1_id, p_user2_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
