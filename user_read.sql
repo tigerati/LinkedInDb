@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION get_post(p_post_id INT)
                       full_name VARCHAR,
                       content VARCHAR,
                       media_url VARCHAR,
+                      bio TEXT,
                       time_since_posted INTERVAL,
                       visibility BOOLEAN
                   ) AS $$
@@ -36,6 +37,7 @@ BEGIN
             Tbl_user.full_name,
             Tbl_Post.content,
             Tbl_Post.media_url,
+            Tbl_user.bio,
             now() - Tbl_Post.posted_at,  -- ⏱️ interval since post
             Tbl_Post.visibility
         FROM Tbl_Post
@@ -122,6 +124,37 @@ BEGIN
     WHERE user2_id = p_user_id AND status = 'accepted';
 
     RETURN connection_count;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- count reactions for a post
+CREATE OR REPLACE FUNCTION count_reactions(p_post_id INT)
+RETURNS INT AS $$
+DECLARE
+    total_count INT;
+BEGIN
+    SELECT COUNT(*) INTO total_count
+    FROM Tbl_Reaction
+    WHERE post_id = p_post_id;
+
+    RETURN total_count;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- count comment in post
+
+CREATE OR REPLACE FUNCTION count_comment(p_post_id INT)
+    RETURNS INT AS $$
+DECLARE
+    total_count INT;
+BEGIN
+    SELECT COUNT(*) INTO total_count
+    FROM Tbl_Comment
+    WHERE post_id = p_post_id;
+
+    RETURN total_count;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -217,5 +250,40 @@ BEGIN
         FROM Tbl_Experience e
         WHERE e.user_id = p_user_id
         ORDER BY e.start_date DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Get reposts by user
+CREATE OR REPLACE FUNCTION get_reposts_by_user(p_user_id INT)
+    RETURNS TABLE (
+                      repost_id INT,
+                      repost_content TEXT,
+                      repost_created_at TIMESTAMP,
+                      visibility visibility_status,
+                      post_id INT,
+                      post_content VARCHAR,
+                      post_media_url VARCHAR,
+                      post_posted_at TIMESTAMP,
+                      original_author_id INT,
+                      original_author_name VARCHAR
+                  ) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            r.repost_is,
+            r.content,
+            r.created_at,
+            r.visibility,
+            p.post_id,
+            p.content,
+            p.media_url,
+            p.posted_at,
+            u.user_id,
+            u.full_name
+        FROM Tbl_repost r
+                 JOIN Tbl_Post p ON r.post_id = p.post_id
+                 JOIN Tbl_user u ON p.author_id = u.user_id
+        WHERE r.user_id = p_user_id;
 END;
 $$ LANGUAGE plpgsql;
