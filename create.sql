@@ -152,12 +152,12 @@ CREATE TABLE Tbl_Recruiter (
 
 CREATE TABLE Tbl_Message (
     msg_id SERIAL PRIMARY KEY,
-    company_id INT NOT NULL,
-    user_id INT NOT NULL,
+    conversation_id INT NOT NULL,
+    sender_id INT NOT NULL,
     content VARCHAR(255),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (company_id) REFERENCES Tbl_Company(company_id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (conversation_id) REFERENCES tbl_conversation(conversation_id) ON DELETE CASCADE
 );
 
 CREATE TABLE tbl_conversation (
