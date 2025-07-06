@@ -29,28 +29,6 @@ BEGIN
 END;
 $$ language plpgsql;
 
-create or replace function update_education(
-    _edu_id int,
-    _user_id int,
-    _school_name varchar,
-    _degree varchar,
-    _field_of_study varchar,
-    _start_year int,
-    _end_year int
-)
-returns void as
-$$
-BEGIN
-    update tbl_education
-    set school_name = _school_name,
-        degree = _degree,
-        field_of_study = _field_of_study,
-        start_year = _start_year,
-        end_year = _end_year
-    where edu_id = _edu_id and user_id = _user_id;
-END;
-$$ language PLPGSQL;
-
 -- Function to update a post by post_id
 CREATE OR REPLACE FUNCTION update_post(
     p_post_id INT,
