@@ -43,6 +43,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION create_profile(
+    user_id INT,
+    website VARCHAR,
+    linkedin_url VARCHAR
+)
+RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO tbl_profile (
+        user_id,
+        website,
+        linkedin_url
+    ) VALUES (
+        user_id, website, linkedin_url
+    );
+END;
+$$ LANGUAGE plpgsql;
+
 -- add education
 CREATE OR REPLACE FUNCTION add_education(
     user_id INT,
@@ -77,8 +95,7 @@ select add_education(
        2004
        );
 
-select * from tbl_education;
-
+-- add experience
 CREATE OR REPLACE FUNCTION add_experience(
     user_id INT,
     company_name VARCHAR,
@@ -110,12 +127,11 @@ CREATE OR REPLACE FUNCTION add_user_skill(
 RETURNS TEXT AS
 $$
 BEGIN
-    INSERT INTO tbl_userskill (user_id, skill_id)
-    VALUES (_user_id, _skill_id);
-    RETURN 'Skill added to user';
-EXCEPTION
-    WHEN unique_violation THEN
-        RETURN 'This skill already exists for the user';
+    INSERT INTO tbl_userSkill (user_id, skill_id)
+    VALUES (_user_id, _skill_id)
+    ON CONFLICT (user_id, skill_id) DO NOTHING;
+
+    RETURN 'Skill added (or already existed).';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -261,6 +277,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION create_react(
+    _post_id INT,
+    _user_id INT,
+    _reaction_type VARCHAR
+)
+RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO tbl_reaction (post_id, user_id, reaction_type)
+    VALUES (_post_id, _user_id, _reaction_type)
+    ON CONFLICT (post_id, user_id)
+    DO UPDATE SET reaction_type = EXCLUDED.reaction_type;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Function to delete a connection between two users
 CREATE OR REPLACE FUNCTION delete_connection(p_user1_id INT, p_user2_id INT)
 RETURNS VOID AS $$
@@ -280,3 +312,4 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
