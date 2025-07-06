@@ -127,12 +127,11 @@ CREATE OR REPLACE FUNCTION add_user_skill(
 RETURNS TEXT AS
 $$
 BEGIN
-    INSERT INTO tbl_userskill (user_id, skill_id)
-    VALUES (_user_id, _skill_id);
-    RETURN 'Skill added to user';
-EXCEPTION
-    WHEN unique_violation THEN
-        RETURN 'This skill already exists for the user';
+    INSERT INTO tbl_userSkill (user_id, skill_id)
+    VALUES (_user_id, _skill_id)
+    ON CONFLICT (user_id, skill_id) DO NOTHING;
+
+    RETURN 'Skill added (or already existed).';
 END;
 $$ LANGUAGE plpgsql;
 
