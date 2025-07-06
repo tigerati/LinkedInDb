@@ -26,6 +26,8 @@ BEGIN
     ELSE
         RAISE NOTICE 'Post with ID % does not exist.', p_post_id;
     END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 create or replace function comment_post(
     post_id int,
