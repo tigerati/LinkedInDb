@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION get_post(p_post_id INT)
                       full_name VARCHAR,
                       content VARCHAR,
                       media_url VARCHAR,
+                      bio TEXT,
                       time_since_posted INTERVAL,
                       visibility BOOLEAN
                   ) AS $$
@@ -36,6 +37,7 @@ BEGIN
             Tbl_user.full_name,
             Tbl_Post.content,
             Tbl_Post.media_url,
+            Tbl_user.bio,
             now() - Tbl_Post.posted_at,  -- ⏱️ interval since post
             Tbl_Post.visibility
         FROM Tbl_Post
