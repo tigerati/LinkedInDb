@@ -36,7 +36,7 @@ CREATE TABLE Tbl_Post (
     content VARCHAR(255),
     media_url VARCHAR(255),
     posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    visibility BOOLEAN DEFAULT TRUE,
+    visibility visibility_status DEFAULT 'public',
     FOREIGN KEY (author_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE
 );
 
@@ -169,4 +169,19 @@ CREATE TABLE tbl_conversation (
     FOREIGN KEY (user1_id) REFERENCES tbl_user(user_id),
     FOREIGN KEY (user2_id) REFERENCES tbl_user(user_id),
     CONSTRAINT unique_pair UNIQUE (user1_id, user2_id)
+);
+
+
+
+CREATE TYPE visibility_status AS ENUM ('public', 'private');
+CREATE TABLE Tbl_repost (
+                            repost_is SERIAL PRIMARY KEY,
+                            post_id INT NOT NULL,
+                            user_id INT NOT NULL,
+                            content TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            visibility visibility_status DEFAULT 'public',
+                            FOREIGN KEY (post_id) REFERENCES Tbl_Post(post_id) ON DELETE CASCADE,
+                            FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE,
+                            UNIQUE (post_id, user_id)
 );
