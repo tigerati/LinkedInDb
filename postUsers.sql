@@ -16,6 +16,16 @@ BEGIN
 END;
 $$ language plpgsql;
 
+-- Function to delete a post by post_id
+CREATE OR REPLACE FUNCTION delete_post(p_post_id INT)
+    RETURNS VOID AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM Tbl_Post WHERE post_id = p_post_id) THEN
+        DELETE FROM Tbl_Post WHERE post_id = p_post_id;
+        RAISE NOTICE 'Post with ID % has been deleted.', p_post_id;
+    ELSE
+        RAISE NOTICE 'Post with ID % does not exist.', p_post_id;
+    END IF;
 
 create or replace function comment_post(
     post_id int,
