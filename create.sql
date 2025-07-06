@@ -68,6 +68,7 @@ CREATE TABLE Tbl_JobSeeker (
                                career_goal VARCHAR(100),
                                preferred_industry VARCHAR(100),
                                resume_url VARCHAR(255),
+                               isHiring BOOLEAN DEFAULT FALSE,
                                FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE
 );
 
