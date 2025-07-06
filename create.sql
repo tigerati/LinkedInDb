@@ -64,12 +64,13 @@ CREATE TABLE Tbl_Comment (
 );
 
 CREATE TABLE Tbl_JobSeeker (
-    user_id INT PRIMARY KEY,
-    open_to_work BOOLEAN DEFAULT FALSE,
-    career_goal VARCHAR(100),
-    preferred_industry VARCHAR(100),
-    resume_url VARCHAR(255),
-    FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE
+                               user_id INT PRIMARY KEY,
+                               open_to_work BOOLEAN DEFAULT FALSE,
+                               career_goal VARCHAR(100),
+                               preferred_industry VARCHAR(100),
+                               resume_url VARCHAR(255),
+                               isHiring BOOLEAN DEFAULT FALSE,
+                               FOREIGN KEY (user_id) REFERENCES Tbl_user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Tbl_Education (
