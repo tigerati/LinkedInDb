@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION create_post(
     author_id INT,
     content VARCHAR,
     media_url VARCHAR,
-    visibility visibility_status  -- enum type now
+    visibility visibility_status  DEFAULT 'public'-- enum type now
 )
 RETURNS VOID AS
 $$
@@ -59,7 +59,7 @@ BEGIN
         RAISE NOTICE 'Post with ID % does not exist.', p_repost_id;
     END IF;
 END;
-$$ LANGUAGE plpgsql;`
+$$ LANGUAGE plpgsql;
 
 create or replace function comment_post(
     post_id int,
