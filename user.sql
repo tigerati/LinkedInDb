@@ -31,7 +31,7 @@ BEGIN
 
     -- Insert the user
     INSERT INTO tbl_user (
-        full_name, address, email, password_hash,
+        full_name, address, email, encode(digest(password_hash,'sha256'),'hex'),
         profile_pic, bio, created_at, user_type
     )
     VALUES (
