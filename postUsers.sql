@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION create_post(
     author_id INT,
     content VARCHAR,
     media_url VARCHAR,
-    visibility visibility_status  -- enum type now
+    visibility visibility_status  DEFAULT 'public'-- enum type now
 )
 RETURNS VOID AS
 $$
@@ -46,6 +46,20 @@ BEGIN
     ELSE
         RAISE NOTICE 'Post with ID % does not exist.', p_post_id;
     END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION delete_repost(p_repost_id INT)
+    RETURNS VOID AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM Tbl_repost WHERE repost_id = p_repost_id) THEN
+        DELETE FROM Tbl_repost WHERE repost_id = p_repost_id;
+        RAISE NOTICE 'Post with ID % has been deleted.', p_repost_id;
+    ELSE
+        RAISE NOTICE 'Post with ID % does not exist.', p_repost_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 create or replace function comment_post(
     post_id int,

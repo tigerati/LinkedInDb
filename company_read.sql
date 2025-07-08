@@ -71,3 +71,31 @@ BEGIN
     RETURN applicant_count;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- Function to get company profile by company_id
+CREATE OR REPLACE FUNCTION get_company_profile(p_company_id INT)
+    RETURNS TABLE (
+                      company_id INT,
+                      user_id INT,
+                      industry VARCHAR,
+                      company_name VARCHAR,
+                      website VARCHAR,
+                      address VARCHAR,
+                      logo_url VARCHAR
+                  )
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            c.company_id,
+            c.user_id,
+            c.industry,
+            c.company_name,
+            c.website,
+            c.address,
+            c.logo_url
+        FROM Tbl_Company c
+        WHERE c.company_id = p_company_id;
+END;
+$$ LANGUAGE plpgsql;
