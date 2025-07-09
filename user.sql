@@ -313,3 +313,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Display all posts that is public
+CREATE OR REPLACE FUNCTION get_filtered_feed(_user_id int)
+RETURNS TABLE (
+                    author varchar,
+                    content varchar,
+                    media_url varchar,
+                    posted_at timestamp
+                  ) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            u.full_name,
+            p.content,
+            p.media_url,
+            p.posted_at
+        FROM Tbl_post p
+        JOIN tbl_user u on p.author_id = u.user_id
+        WHERE p.visibility = 'public' and p.author_id = _user_id;
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'User may not exist or the post is private.';
+        END IF;
+END;
+$$ LANGUAGE plpgsql;
