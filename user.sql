@@ -330,7 +330,7 @@ BEGIN
             p.posted_at
         FROM Tbl_post p
         JOIN tbl_user u on p.author_id = u.user_id
-        WHERE p.visibility = 'public' and p.author_id = _user_id;
+        WHERE p.visibility = 'public';
         IF NOT FOUND THEN
             RAISE EXCEPTION 'User may not exist or the post is private.';
         END IF;
