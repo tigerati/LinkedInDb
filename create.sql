@@ -8,7 +8,7 @@ CREATE TABLE Tbl_user (
     bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_type VARCHAR(100) NOT NULL DEFAULT 'jobSeeker',
-    CHECK (user_type IN ('jobSeeker', 'company'))
+    CHECK (user_type IN ('jobSeeker', 'company', 'admin'))
 );
 
 
@@ -166,8 +166,8 @@ CREATE TABLE tbl_conversation (
     user1_id INT NOT NULL,
     user2_id INT NOT NULL,
     started_at TIMESTAMP DEFAULT NOW(),
-    FOREIGN KEY (user1_id) REFERENCES tbl_user(user_id),
-    FOREIGN KEY (user2_id) REFERENCES tbl_user(user_id),
+    FOREIGN KEY (user1_id) REFERENCES tbl_user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user2_id) REFERENCES tbl_user(user_id) ON DELETE CASCADE,
     CONSTRAINT unique_pair UNIQUE (user1_id, user2_id)
 );
 
