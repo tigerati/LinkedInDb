@@ -8,7 +8,7 @@ CREATE TABLE Tbl_user (
     bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_type VARCHAR(100) NOT NULL DEFAULT 'jobSeeker',
-    CHECK (user_type IN ('jobSeeker', 'company'))
+    CHECK (user_type IN ('jobSeeker', 'company', 'admin'))
 );
 
 
