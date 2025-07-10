@@ -287,3 +287,29 @@ BEGIN
         WHERE r.user_id = p_user_id;
 END;
 $$ LANGUAGE plpgsql;
+
+create or replace function get_all_user_post(
+    _author_id int
+)
+returns table(
+    post_id int,
+    author_id int,
+    content varchar,
+    media_url varchar,
+    posted_at timestamp,
+    visibility visibility_status
+             ) as
+$$
+BEGIN
+    return query
+    select
+        p.post_id,
+        p.author_id,
+        p.content,
+        p.media_url,
+        p.posted_at,
+        p.visibility
+    from tbl_post p
+    where p.author_id = _author_id;
+END;
+$$ language plpgsql;
