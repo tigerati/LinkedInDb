@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION get_post(p_post_id INT)
                       media_url VARCHAR,
                       bio TEXT,
                       time_since_posted INTERVAL,
-                      visibility BOOLEAN
+                      visibility visibility_status
                   ) AS $$
 BEGIN
     RETURN QUERY
