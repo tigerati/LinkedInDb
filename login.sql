@@ -1,19 +1,18 @@
-CREATE OR REPLACE FUNCTION sign_in(p_username VARCHAR, p_password VARCHAR)
-RETURNS INT
+CREATE OR REPLACE FUNCTION sign_in(p_email VARCHAR, p_password VARCHAR)
+RETURNS TEXT
 AS $$
 DECLARE
     v_user_id INT;
 BEGIN
     SELECT user_id INTO v_user_id
     FROM Tbl_user
-    WHERE username = p_username
+    WHERE email = p_email
       AND password_hash = encode(digest(p_password, 'sha256'), 'hex');
 
     IF v_user_id IS NULL THEN
-        RAISE NOTICE 'Invalid username or password.';
-        RETURN NULL;
+        RETURN 'Invalid username or password.';
     ELSE
-        RETURN v_user_id;
+        RETURN 'Login successful';
     END IF;
 END;
 $$ LANGUAGE plpgsql;
