@@ -99,3 +99,22 @@ BEGIN
         WHERE c.company_id = p_company_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Read all job post from that company
+CREATE OR REPLACE FUNCTION read_all_jobpost(_company_id int)
+RETURNS TABLE (
+                    title varchar,
+                    content text,
+                    applicants int
+                  ) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            j.title,
+            j.description,
+            count_applicant(j.job_id, a.application_id)
+        FROM Tbl_jobpost j
+        JOIN tbl_application a on j.job_id = a.job_id
+        WHERE j.company_id = _company_id;
+END;
+$$ LANGUAGE plpgsql;
